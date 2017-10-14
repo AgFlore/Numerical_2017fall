@@ -1,0 +1,173 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{amsmath}
+\usepackage{geometry}
+\geometry{left=0.7in,right=0.7in,bottom=1.5in}
+
+\title{计算物理学作业1}
+\author{朱寅杰 1600017721}
+\date{2017年10月11日}
+\begin{document}
+\maketitle
+\section{数值误差的避免}
+\subsection{}
+
+我们用$\sum$来指代通常数学的求和，用$\oplus$来指代在机器中会产生舍入误差的求和。在计算平均值时，每一步的求和中都会产生一定的舍入误差：
+\begin{equation}
+\bigoplus\limits_{i=1}^{N} x_i=(...((x_1+x_2)(1+\epsilon_2)+x_3)(1+\epsilon_3)+...)+x_N)(1+\epsilon_N)
+\end{equation}
+其中$\epsilon_i(i=2,3,...,N)$为每一步求和中的相对舍入误差，它的绝对值小于$\epsilon_M/2$。由于各个$\epsilon_i$均为小量，我们对(1)式只保留其一阶量：
+\begin{equation}
+\bigoplus\limits_{i=1}^{N} x_i\doteq \sum\limits_{i=1}^{N}x_i+(x_1+x_2)\epsilon_2 +(x_1+x_2+x_3)\epsilon_3 +...+(x_1+x_2+...+x_N)\epsilon_N
+\end{equation}
+要估计最大可能的误差，我们首先把这个各个$\epsilon_i$放大到上限$\epsilon_M/2$，然后再把每一个$x_i$的部分和求和放大成对所有$x_i$的求和，这样放大的结果是
+\begin{equation}
+\lvert \bigoplus\limits_{i=1}^{N} x_i-\sum\limits_{i=1}^{N}x_i \rvert \leq (N-1)(x_1+x_2+...+x_N)\epsilon_M/2
+\end{equation}
+于是我们估计出了$\sum\limits_{i=1}^{N}x_i$的相对舍入误差的上限为$(N-1)\epsilon_M/2$。要求平均值还需要再除以一个常数$N$，最多再产生一个$\epsilon_M/2$的相对舍入误差。于是最后总的相对舍入误差应该不超过$N\epsilon_M/2$。当然这个估计是一个对最坏情况上限的估计，实际计算中产生的误差一般远比这个数值小。
+
+\subsection{}
+
+所给的两个计算样本方差的公式为
+\begin{equation}
+S^2=\frac{1}{N-1}(\sum\limits_{i=1}^{N}x_i^2-N\bar{x}^2)
+\end{equation}
+与
+\begin{equation}
+S^2=\frac{1}{N-1}\sum\limits_{i=1}^{N}(x_i-\bar{x})^2
+\end{equation}
+当$\bar{x}\rightarrow0$时，两种算法显然并没有什么差别。但当$\bar{x}$的绝对值比较大时，两种算法都会产生一定的舍入误差。具体地说，首先在前一种算法中会涉及到$\sum\limits_{i=1}^{N}x_i^2$和$N\bar{x}^2$这两个大数的相减，在后一种算法中会涉及到$x_i-\bar{x},i=1,2,...,N$的减法。当$\bar{x}$相当大时，这两个减法操作都会造成相当大的有效数字的损失，但经过简单的分析可知这两种操作损失的精度基本相当。（好比$100001.123456789^2-100000.987654321^2$与$(100001.123456789-100000.987654321)^2$两者损失的精度是差不多的，都丢了五位小数）其次在求和的过程中，由于前者求和时的数字往往大于后者许多，因此在相同的相对舍入误差下会产生较大的绝对误差，因而前者最终得到的结果的精确度不如后者。
+
+\subsection{}
+
+对于积分
+\begin{equation}
+I_n=\int\limits_0^1\frac{x^ndx}{x+5}
+\end{equation}
+容易有$I_0=\int\limits_0^1\frac{dx}{x+5}=\ln(6/5)$，并且有
+\begin{equation}
+I_k+5I_{k-1}=\int\limits_0^1dx\frac{x^k+5x^{k-1}}{x+5}=\int\limits_0^1x^{k-1}dx=\frac{1}{k},k=1,2,3,...
+\end{equation}
+由此我们获得了一个计算$I_n$的递推式。然而这个递推算法并不稳定。比如当我们在计算$I_0$时有一个误差$\epsilon_0$，也就是我们算出的是$I_0'=I_0+\epsilon_0$，那相应地后面每一项都会产生这样的偏差$I_n'=I_n+\epsilon_n$。从递推式可以得出偏差$\epsilon_n$满足
+\begin{equation}
+\epsilon_k=-5\epsilon_{k-1},k=1,2,...
+\end{equation}
+这意味着每一项递推里的偏差$\epsilon_n$会指数增长，也就是说用这个算法计算$I_n$并不稳定。
+
+\section{矩阵的模与条件数}
+\subsection{}
+所给的$A$为上三角矩阵，行列式$\lvert A \rvert$等于所有主对角元的乘积，即$\lvert A \rvert=1$。因此$A$是非奇异的。
+\subsection{}
+所给矩阵$A$是一个上三角矩阵，因此只需将$Ax=y$写成方程组的形式，然后反代用$y$表示$x$，得到$x=A^{-1}y$即可写出$A^{-1}$。
+\begin{equation}
+A^{-1}
+=\begin{bmatrix}
+1&1&2&4&...&2^{n-3}&2^{n-2}\\
+0&1&1&2&...&2^{n-4}&2^{n-3}\\
+\vdots&\vdots&\vdots&\vdots&&\vdots&\vdots\\
+0&0&0&0&...&1&1\\
+0&0&0&0&...&0&1 
+\end{bmatrix}
+\end{equation}
+是一个上三角矩阵，主对角元均为1，其他元素$a_{ij}=2^{j-i-1},j>i$均为2的整数幂。
+
+\subsection{}
+对于$n$维矢量的$p$模$\lVert x \rVert_p$，当$p\rightarrow \infty$时有$\lVert x \rVert_{\infty}=\max\limits_{i=1,...,n} \lvert x_i \rvert$，因而有
+\begin{equation}
+\lVert A \rVert_{\infty}=\sup\limits_{\forall x\neq0} \frac
+{\max\limits_{i=1,...,n} \lvert \sum\limits_{j=1}^n a_{ij}x_j \rvert}
+{\max\limits_{i=1,...,n} \lvert x_i \rvert}
+=\sup\limits_{\forall x\neq0} 
+\max\limits_{i=1,...,n} \lvert \sum\limits_{j=1}^n \frac
+{a_{ij}x_j }
+{\max\limits_{k=1,...,n} \lvert x_k \rvert} \rvert
+=\max\limits_{i=1,...,n} \sum\limits_{j=1}^n \lvert a_{ij}\rvert
+\end{equation}
+
+\subsection{}
+对于幺正矩阵$U$，我们知道对于任意矢量$x$都有
+\begin{equation}
+\lVert Ux \rVert_2^2 = (x^{\dag}U^{\dag})(Ux)=x^{\dag}(U^{\dag}U)x=x^{\dag}x=\lVert x \rVert_2^2
+\end{equation}
+故有$\lVert U \rVert_2=1$，同理$\lVert U^{\dag} \rVert_2=1$。
+
+将上一式中的$x$替换成$Ax$即得$\lVert UAx \rVert_2=\lVert Ax \rVert_2^2$。因此
+\begin{equation}
+\lVert UA\rVert_2=\sup\limits_{\forall x\neq0}\frac{\lVert UAx\rVert_2}{\lVert x\rVert_2}=\sup\limits_{\forall x\neq0}\frac{\lVert Ax\rVert_2}{\lVert x\rVert_2}=\lVert A\rVert_2
+\end{equation}
+因此用欧式模定义的条件数就满足$K_2(UA)=\lVert UA\rVert_2\lVert A^{-1}U^{\dag}\rVert_2=K_2(A)$。
+
+\subsection{}
+回到题中所给的那个上三角矩阵，我们来计算它的条件数$K_{\infty}(A)$。有
+\begin{equation}
+\lVert A \rVert_{\infty}=\max\limits_{i=1,...,n} \lvert \sum\limits_{j=1}^n a_{ij}\rvert=n,n=2,3,...
+\end{equation}
+\begin{equation}
+\lVert A^{-1} \rVert_{\infty}=\max\limits_{i=1,...,n} \lvert \sum\limits_{j=1}^n a_{ij}\rvert=2^{n-1},n=2,3,...
+\end{equation}
+故条件数$K_{\infty}(A)=n\times 2^{n-1}$
+
+\section{Hilbert矩阵}
+\subsection{}
+为了确定使积分
+\begin{equation}
+D=\int\limits_0^1 dx(\sum\limits_{i=1}^n c_i x^{i-1}-f(x))^2
+\end{equation}
+的值最小的系数$c_i$，我们有
+\begin{equation}
+\begin{aligned}
+0=\frac{\partial D}{\partial c_i}=&\int\limits_0^1 2x^{i-1}dx(\sum\limits_{j=1}^n c_j x^{j-1}-f(x))\\
+=&\sum\limits_{j=1}^n c_j \int\limits_0^1 x^{i+j-2}dx-\int\limits_0^1 x^{i-1}f(x)dx\\
+=&\sum\limits_{j=1}^n\frac{c_j}{i+j-1}-\int\limits_0^1 x^{i-1}f(x)dx
+\end{aligned}
+\end{equation}
+即有$\sum\limits_{j=1}^n(H_n)_{ij}c_j=b_i$，其中
+$(H_n)_{ij}=\frac{1}{i+j-1}$，而$b_i=\int\limits_0^1 x^{i-1}f(x)dx$。
+\subsection{}
+下面试图证明$H_n$是一个正定矩阵。我们从正定的定义出发，任意取一个$n$维向量$c=(c_1,c_2,...c_n)^T$，有
+
+
+\begin{equation}
+\begin{aligned}
+c^THc=&\sum\limits_{1\leq i,j\leq n}\frac{c_ic_j}{i+j-1}
+=\sum\limits_{1\leq i,j\leq n}c_ic_j \int\limits_0^1 x^{i+j-1}dx
+=\int\limits_0^1 dx\sum\limits_{1\leq i,j\leq n}c_ic_jx^{i+j-1}\\
+=&\int\limits_0^1 xdx (c_1+c_2x+c_3x^2+...+c_nx^{n-1})^2
+\geq 0
+\end{aligned}
+\end{equation}
+等号成立仅当$c_1=c_2=...=c_n=0$时取。由定义知$H_n$是一个正定矩阵，自然地它是一个非奇异矩阵。
+
+\subsection{}
+下面来估计$\det(H_n)$的值。由文献所给公式知
+\begin{equation}
+\ln \det(H_n)=4\sum\limits_{k=1}^n\ln(k-1)!-\sum\limits_{k=1}^{2n}\ln(k-1)!
+=4\sum\limits_{k=1}^{n-1}(n-k)\ln k-\sum\limits_{k=1}^{2n-1}(2n-k)\ln k
+\end{equation}
+使用带有求和功能的计算器计算$\ln \det(H_n)$的值，结果如下：\\
+\begin{tabular*}{0.5\textwidth}{@{\extracolsep{\fill}}c|c c}
+\hline
+n& $\ln \det(H_n)$ &$ \det(H_n)$\\
+\hline
+2&-2.48491&$8.33333\times 10^{-02}$\\
+3&	-7.67786&$4.62963\times 10^{-04}$\\
+4&	-15.61524&$1.65344\times 10^{-07}$\\
+5&	-26.30945&$3.74930\times 10^{-12}$\\
+6&	-36.76621&$1.07805\times 10^{-16}$\\
+7&	-55.98858&$4.83580\times 10^{-25}$\\
+8&	-74.97843&$2.73705\times 10^{-33}$\\
+9&	-96.73695&$9.72023\times 10^{-43}$\\
+10&	-121.26497&$2.16418\times 10^{-53}$\\
+\hline
+\end{tabular*}
+
+
+可见$H_n$当n稍大时就已经非常接近奇异了。
+\subsection{}
+笔者写了两个Python小程序，分别使用高斯消元法和Cholesky分解来求解方程组$H_nx=b$，其中$b=(1,1...,1)^T$。程序文档的文件名分别为gem.py和cholesky.py，调试时使用64位Python 3.60运行无误。运行时按照提示输入一个正整数$N$，程序会分别对系数矩阵为$H_2,H_3,...H_N$的方程组进行计算，结果会输出到GEMOutput.txt和choleskyOutput.txt中。
+
+容易证明$H_nx=b$的解$x$的第一个分量满足$x_1=(-1)^{n-1}n$，我们将其与计算机求得的结果对比，以作为判断解是否可靠的依据。从运行结果看，由于浮点数$10^{-16}$左右的精度限制，GEM法在$n\geq12$，Cholesky法在$n\geq13$开始就完全无法给出有意义的解了（GEM法偏差超过20\%，而Cholesky法在分解时会遇到负数开平方根）。
+
+在题中考察的$n\leq10$的区域，两种算法都可以说是基本准确。抽取几个知道真值的解的分量（事实上$n\leq9$的区域里离计算机所解出的数值最接近的整数便是真值）看，两者离真值的偏差在同一个数量级内；硬要比较起来，在$n=$5\textasciitilde9的区域中GEM法的偏差大约比Cholesky法小两三倍。
+
+造成这并不算大的差别的原因是什么呢？我也不能给出明确的答案。也许对一个很小的数开平方根的操作本身就会丢好多有效数字（$y=x^{0.5}$在$x$很小的时候本来斜率就发散，导致开完根之后有效数字会变少），可能因此会比只做除法还能做支点选择的GEM法要差一些。当然也有可能是别的和语言本身相关或是其他需要仔细分析算法才能明白的问题。
+\end{document}
