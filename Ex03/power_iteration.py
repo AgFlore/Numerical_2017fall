@@ -11,7 +11,7 @@ a[0] = 1
 for i in range(1000):
 	a = A(a)
 	M = P(a,a)
-	a = [a[j]/M for j in range(len(a))]
+	a = [a[j]/M**0.5 for j in range(len(a))]
 
 lmax=P(a,A(a))
 print(lmax)
