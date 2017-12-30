@@ -30,7 +30,7 @@ corsvar = [sum(corresi[i])/(samples-1) for i in range(len(corcent))]
 zaoxinbi = [corsvar[i]**0.5/abs(corcent[i]) for i in range(len(corcent))]
 
 #此处需要输出信噪比数值
-
+print(zaoxinbi)
 #	用ratio法计算有效质量
 meffrc=[math.log(corcent[i]/corcent[i+1]) for i in range(len(corcent)-1)]
 

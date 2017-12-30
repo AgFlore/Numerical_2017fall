@@ -1,0 +1,59 @@
+% !TEX TS-program = Xelatex
+% !TEX encoding = UTF-8 Unicode
+
+\documentclass[UTF8,size=9.5]{ctexart}
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage[table]{xcolor}
+\usepackage[bottom]{footmisc}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{figsize}
+\usepackage{standalone}
+\usepackage[separate-uncertainty = true,tight-spacing=true,round-minimum=0.00000000001]{siunitx}
+\usepackage{tabu}
+\usepackage{wasysym}
+\usepackage{geometry}
+\geometry{left=0.7in,right=0.7in,bottom=0.7in,top=0.7in}
+
+\title{计算物理学作业4}
+\author{朱寅杰 1600017721}
+\begin{document}
+
+\maketitle
+
+\section{利用标准的 4 阶 Runge-Kutta 来求解Lotka–Volterra方程的初值问题}
+对于微分方程组
+$\begin{cases}
+	\dot{x}=\alpha x-\beta xy \\
+	\dot{y}=\delta xy-\gamma y
+\end{cases}$
+，作变量代换
+$\begin{cases}
+	X=\delta x/\alpha\\
+	Y=\beta y/\alpha\\
+	T=\alpha t
+\end{cases}$
+，得到
+$\begin{cases}
+\dot{X}=X(1-Y)\\
+\dot{Y}=Y(X-\gamma/\alpha),\gamma/\alpha>0
+\end{cases}$
+。对于这个方程组，我们首先考察其不含时的特解（即$\dot{X}=\dot{Y}=0$的解）：其一为$X(T)=Y(T)=0$，其一为$X(T)=\gamma/\alpha,Y(T)=1$。作一个微扰的话，
+\begin{enumerate}[label={\alph*)},font=\bfseries]
+\item 对于前者，设$X(T)=\epsilon_1(T)$，$Y(T)=\epsilon_2(T)$，其中$\epsilon$均为小量，取一阶近似得在$T$很小时有$\begin{cases}\dot{\epsilon_1}=\epsilon_1\\\dot{\epsilon_2}=-\gamma/\alpha\epsilon_2(T))\end{cases}$，故$\begin{cases}\epsilon_1(T)\approx\epsilon_1(0)\exp{T}\\\epsilon_2(T)\approx\epsilon_2(0)\exp{(-T\gamma/\alpha)}\end{cases}$，也就是说对于$X$方向上的微扰这个不动点是不稳定的，而对于$Y$方向上的微扰这个不动点是稳定的。
+\item 对于后者，取$X(T)=\gamma/\alpha+\epsilon_1(T),Y(0)=1+\epsilon_2(T)$，则有$\begin{cases}
+                                                                         \dot{\epsilon_1}=-(\epsilon_1+\gamma/\alpha)\epsilon_2\\
+                                                                         \dot{\epsilon_2}=(1+\epsilon_2)\epsilon_1
+                                                                       \end{cases}$
+再对$T$求导，保留至一阶小量，得到$\begin{cases}
+                  \ddot{\epsilon_1}=-\epsilon_1(T)\times\gamma/\alpha\\
+                  \ddot{\epsilon_2}=-\epsilon_2(T)\times\gamma/\alpha
+                \end{cases}$
+                故这是一个稳定不动点。
+\end{enumerate}
+事实上，这个微分方程组是可积的。将两式相除得到$\frac{\mathrm{d}Y}{\mathrm{d}X}=\frac{Y(X-\gamma/\alpha)}{X(1-Y)}$，分离变量积分得到$X+Y-\log{(X^{\gamma/\alpha}Y)}=$常数。
+
+\end{document}
+
+
