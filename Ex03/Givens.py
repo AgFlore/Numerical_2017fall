@@ -8,6 +8,7 @@ def Givens (A):
 	for i in range(N):
 		Q[i][i]=1
 	R = A[:]
+	#	旋转操作。嗯就是旋转操作。
 	for j in range(N):
 		for i in range(j+1,N):
 			M = (R[j][j]**2+R[i][j]**2)**0.5
@@ -21,3 +22,5 @@ A = [[2-2*random.random() for i in range(6)]for j in range(6)]
 print(A)
 print(Givens(A))
 print(timeit.timeit('C=Givens([[2-2*random.random() for i in range(6)]for j in range(6)])',setup="from __main__ import Givens,A,random",number=10000))
+print(timeit.timeit('C=Givens([[2-2*random.random() for i in range(12)]for j in range(12)])',setup="from __main__ import Givens,A,random",number=10000))
+print(timeit.timeit('C=Givens([[2-2*random.random() for i in range(18)]for j in range(18)])',setup="from __main__ import Givens,A,random",number=10000))

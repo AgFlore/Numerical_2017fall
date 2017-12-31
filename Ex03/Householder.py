@@ -8,7 +8,7 @@ def Householder (A):
 	for i in range(N):
 		Q[i][i]=1
 	R = A[:]
-	for k in range(N):
+	for k in range(N-1):
 		# 作为反射标的的单位矢量
 		rotor = [R[i][k] for i in range(k,N)]
 		# 算rotor的模长
@@ -38,4 +38,6 @@ def Householder (A):
 A = [[2-2*random.random() for i in range(6)]for j in range(6)]
 print(A)
 print(Householder(A))
-print(timeit.timeit('C=Householder([[2-2*random.random() for i in range(6)]for j in range(6)])',setup="from __main__ import Householder,A,random",number=10000))
+print(timeit.timeit('random.seed(); A = [[2-2*random.random() for i in range(6)]for j in range(6)];C=Householder(A)',setup="from __main__ import Householder,random",number=10000))
+print(timeit.timeit('random.seed(); C=Householder([[2-2*random.random() for i in range(12)]for j in range(12)])',setup="from __main__ import Householder,A,random",number=10000))
+print(timeit.timeit('random.seed(); C=Householder([[2-2*random.random() for i in range(18)]for j in range(18)])',setup="from __main__ import Householder,A,random",number=10000))

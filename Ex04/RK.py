@@ -21,5 +21,39 @@ def DSolve(dxdt,dydt,xi,yi,err=1e-11,tmax=10):
 			sol.append([sol[-1][0]+h,x1,y1])
 		h = h*hcorrection**0.2
 	return sol
+# import math
+# s = DSolve(xrate,yrate,0.8,0.8,err=1e-11,tmax=2)
+# for a in s:
+	# print(math.log(a[1])-a[1]+2/3*math.log(a[2])-4/3*a[2])
 
-print(DSolve(xrate,yrate,0.8,0.8,err=1e-11,tmax=2))
+# 画图画图
+import numpy
+import matplotlib
+matplotlib.use('PS')
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+
+for i in [0.8,1.0,1.2,1.4,1.6]:
+	s= DSolve(xrate,yrate,i,i,err=1e-11,tmax=10)
+	xlist = []; ylist = [];
+	for a in s:
+		xlist.append(a[1]);
+		ylist.append(a[2]);
+	cm = plt.cm.get_cmap('brg')
+	tick = [[],[],[]]
+	for tock2 in range(int(4*i+13)):
+		tock = tock2/2
+		for a in s:
+			if a[0]>tock:
+				for j in range(3):
+					tick[j].append(a[j])
+				break
+	
+	ax.plot(xlist,ylist,linewidth=.2)
+	global b
+	b = ax.scatter(tick[1],tick[2],c=tick[0],vmin=0,vmax=9,s=12,marker="*",cmap=cm)
+cb = plt.colorbar(b)
+cb.set_label('t')
+plt.xlabel('x')
+plt.ylabel('y')
+fig.savefig("RK.eps",bbox_inches='tight')

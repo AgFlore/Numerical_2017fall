@@ -30,8 +30,9 @@ corsvar = [sum(corresi[i])/(samples-1) for i in range(len(corcent))]
 zaoxinbi = [corsvar[i]**0.5/abs(corcent[i]) for i in range(len(corcent))]
 
 #此处需要输出信噪比数值
+print('相对误差：')
 print(zaoxinbi)
-#	用ratio法计算有效质量
+#	用ratio法计算有效质量（因为是ratio法，所以叫meffr。rc代表直接算出的中心值，rjc代表用Jackknife算出的中心值（两者有细微差异，不过我们“数据点多所以相差不大”（刘川语）），rj代表用Jackknife算出的误差。原谅我这么无脑的命名法）
 meffrc=[math.log(corcent[i]/corcent[i+1]) for i in range(len(corcent)-1)]
 
 #	Jackknife法估算meffrc的中心值
@@ -73,18 +74,24 @@ for min in range(len(meffrc)-4):
 		temp2 = [cinterv[i]/vinterv[i]**2 for i in range(len(cinterv))]
 		mfit = sum(temp1)/sum(temp2)
 		temp3 = [((cinterv[i]-mfit)/vinterv[i])**2 for i in range(len(cinterv))]
-		chiperd = sum(temp3)/len(cinterv)
+		chiperd = sum(temp3)/(max-min)
 		if (chiperd < chi2perdof):
 			chi2perdof = chiperd
 			mfitted = mfit
 			mint = min
 			maxt = max
 
+print ('比值法卡方拟合：')
 print ([mint,maxt,mfitted,chi2perdof])
+print ('各点的meff及其误差：')
 print ([meffrc,meffrj])
 
+print('输出被选中的孩子，供计算误差用')
+print(meffrc[mint:maxt+1])
+print(meffrj[mint:maxt+1])
 
-#	用acosh法计算有效质量
+[mmmm,cccc]=[mfitted,chi2perdof]
+#	用acosh法计算有效质量（因为是acosh法，所以叫meffc）
 meffcc=[math.acosh((corcent[i]+corcent[i+2])/(2*corcent[i+1])) for i in range(len(corcent)-2)]
 
 #	Jackknife法估算meffcc的中心值
@@ -113,7 +120,6 @@ for i in range(len(meffcc)):
 		resid+=(meffff-meffcjc[i])**2
 	meffcj.append(((1-1/samples)*resid)**0.5)
 
-#此处可以输出meffcc的误差meffcj
 
 
 #	最小卡方拟合
@@ -127,15 +133,21 @@ for min in range(len(meffcc)-4):
 		temp2 = [cinterv[i]/vinterv[i]**2 for i in range(len(cinterv))]
 		mfit = sum(temp1)/sum(temp2)
 		temp3 = [((cinterv[i]-mfit)/vinterv[i])**2 for i in range(len(cinterv))]
-		chiperd = sum(temp3)/len(cinterv)
+		chiperd = sum(temp3)/(max-min)
 		if (chiperd < chi2perdof):
 			chi2perdof = chiperd
 			mfitted = mfit
 			mint = min
 			maxt = max
 
-print ([mint,maxt,mfitted,chi2perdof])
+print ('acosh法卡方拟合：')
+print ([mint+1,maxt+1,mfitted,chi2perdof])	# 指标+1后输出是因为meffcc的指标是0～30，而题目中是1～31
+print ('acosh法各点meff及其误差（从t=1开始）')
 print ([meffcc,meffcj])
+
+print('输出被选中的孩子，供计算误差用')
+print(meffcc[mint:maxt+1])
+print(meffcj[mint:maxt+1])
 
 
 # Boot strap for covariance matrix
@@ -163,10 +175,31 @@ c35 = sum(s)/2000
 r35 = [(s[i]-c35)**2 for i in range (2000)]
 v35 = (sum(r35)/1999)**0.5
 
+print('两个相关系数：')
 print([c34,v34])
 print([c35,v35])
 
 
+# 画图画图
+import numpy
+import matplotlib
+matplotlib.use('PS')
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+
+ax.errorbar([25.5],mmmm,xerr=1.5,yerr=0.001005,ms=0.05,fmt='x',linewidth=0.4)
+ax.errorbar(range(len(meffrc)),meffrc,yerr=meffrj,ms=0.05,fmt='_',linewidth=0.4)
+
+fig.savefig("ratio.eps",dpi=300,bbox_inches='tight')
+
+fig, ax = plt.subplots()
+
+ax.errorbar([27],mmmm,xerr=2,yerr=0.00109,ms=0.05,fmt='x',linewidth=0.4)
+ax.errorbar(range(1,len(meffcc)+1),meffcc,yerr=meffcj,ms=0.05,fmt='_',linewidth=0.3)
+
+
+fig.savefig("acosh.eps",dpi=300,bbox_inches='tight')
 
 
 
