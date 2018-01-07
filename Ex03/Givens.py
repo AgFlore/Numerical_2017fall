@@ -12,8 +12,10 @@ def Givens (A):
 	for j in range(N):
 		for i in range(j+1,N):
 			M = (R[j][j]**2+R[i][j]**2)**0.5
-			[Q[j][j],Q[j][i],Q[i][j],Q[i][i]] = [(R[j][j]*Q[j][j]+R[i][j]*Q[i][j])/M,(R[j][j]*Q[j][i]-R[i][j]*Q[i][i])/M,(R[i][j]*Q[j][j]+R[j][j]*Q[i][j])/M,(-R[i][j]*Q[j][i]+R[j][j]*Q[i][i])/M]
-			[R[j][j],R[j][i],R[i][j],R[i][i]] = [(R[j][j]*R[j][j]+R[i][j]*R[i][j])/M,(R[j][j]*R[j][i]+R[i][j]*R[i][i])/M,(-R[i][j]*R[j][j]+R[j][j]*R[i][j])/M,(-R[i][j]*R[j][i]+R[j][j]*R[i][i])/M]
+			a = R[j][j]/M; b = R[i][j]/M
+			for k in range(N):
+				[Q[k][j],Q[k][i]] = [(a*Q[k][j]-b*Q[k][i]),(b*Q[k][j]+a*Q[k][i])]
+				[R[j][k],R[i][k]] = [(a*R[j][k]+b*R[i][k]),(-b*R[j][k]+a*R[i][k])]
 	
 	return(Q+R)
 
